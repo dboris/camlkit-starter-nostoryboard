@@ -3,7 +3,12 @@ open Uikit
 open Uikit_globals
 open Runtime
 
-let hello_vc frame =
+let greetings =
+  [| "English", "Hello World!"
+   ; "Spanish", "Hola Mundo!"
+   |]
+
+let hello_vc text frame =
   let vc = _new_ UIViewController._class_
   and label = _new_ UILabel._class_
   in
@@ -12,7 +17,7 @@ let hello_vc frame =
   view |> UIView.setBackgroundColor
     (UIColor._class_ |> UIColor.C.systemBackgroundColor);
 
-  label |> UILabel.setText (new_string "Hello world!");
+  label |> UILabel.setText text;
   label |> UILabel.setTextColor
     (UIColor._class_ |> UIColor.C.systemBlackColor);
   label |> UILabel.setTextAlignment _UITextAlignmentCenter;
@@ -20,19 +25,100 @@ let hello_vc frame =
   view |> UIView.addSubview label;
   vc
 
+module GreetingsTVC = struct
+  open Objc
+
+  let cellID = new_string "Cell"
+
+  let numberOfSectionsInTableView _self _cmd _tv = LLong.of_int 1
+
+  let titleForHeaderInSection _self _cmd _tv _section = new_string "Language"
+
+  let numberOfRowsInSection _self _cmd _tv _section =
+    LLong.of_int (Array.length greetings)
+
+  let cellForRowAtIndexPath _self _cmd tv indexPath =
+    let cell = tv |> UITableView.dequeueReusableCellWithIdentifier' cellID
+      ~forIndexPath: indexPath
+    and i =
+      indexPath |> Property.get "row" ~typ: Objc_t.llong |> LLong.to_int
+    in
+    cell
+    |> UITableViewCell.textLabel
+    |> UILabel.setText (new_string (fst greetings.(i)));
+    cell |> UITableViewCell.setAccessoryType
+      _UITableViewCellAccessoryDisclosureIndicator;
+    cell
+
+  let didSelectRowAtIndexPath self _cmd _tv indexPath =
+    let i =
+      indexPath |> Property.get "row" ~typ: Objc_t.llong |> LLong.to_int
+    and screen_bounds =
+      UIScreen._class_ |> UIScreen.C.mainScreen |> UIScreen.bounds
+    in
+    let vc = hello_vc (new_string (snd greetings.(i))) screen_bounds in
+    let nav_vc =
+      alloc UINavigationController._class_
+      |> UINavigationController.initWithRootViewController vc
+    in
+    self
+    |> UIViewController.parentViewController
+    |> UISplitViewController.showDetailViewController nav_vc ~sender: self
+
+  let viewDidLoad self cmd =
+    self |> msg_super cmd ~args: Objc_t.[] ~return: Objc_t.void;
+    self |> UIViewController.setTitle (new_string "Greetings");
+    self
+    |> UITableViewController.tableView
+    |> UITableView.registerClass UITableViewCell._class_
+        ~forCellReuseIdentifier: cellID
+
+  let _class_ = Define._class_ "GreetingsTVC"
+    ~superclass: UITableViewController._class_
+    ~methods:
+      [ Define._method_ numberOfSectionsInTableView
+        ~args: Objc_t.[id]
+        ~return: Objc_t.llong
+        ~cmd: (selector "numberOfSectionsInTableView:")
+
+      ; Define._method_ titleForHeaderInSection
+        ~args: Objc_t.[id; llong]
+        ~return: Objc_t.id
+        ~cmd: (selector "tableView:titleForHeaderInSection:")
+
+      ; Define._method_ numberOfRowsInSection
+        ~args: Objc_t.[id; llong]
+        ~return: Objc_t.llong
+        ~cmd: (selector "tableView:numberOfRowsInSection:")
+
+      ; Define._method_ cellForRowAtIndexPath
+        ~args: Objc_t.[id; id]
+        ~return: Objc_t.id
+        ~cmd: (selector "tableView:cellForRowAtIndexPath:")
+
+      ; Define._method_ didSelectRowAtIndexPath
+        ~args: Objc_t.[id; id]
+        ~return: Objc_t.void
+        ~cmd: (selector "tableView:didSelectRowAtIndexPath:")
+
+      ; Define._method_ viewDidLoad
+        ~args: Objc_t.[]
+        ~return: Objc_t.void
+        ~cmd: (selector "viewDidLoad")
+      ]
+end
+
 module SceneDelegate = struct
   let scene_willConnectToSession self _cmd scene _session _opts =
     let win =
       alloc UIWindow._class_ |> UIWindow.initWithWindowScene scene
-    and screen_bounds =
-      UIScreen._class_ |> UIScreen.C.mainScreen |> UIScreen.bounds
     and vc_style = _UISplitViewControllerStyleDoubleColumn
     and col_primary = _UISplitViewControllerColumnPrimary
     in
     let vc =
       alloc UISplitViewController._class_
       |> UISplitViewController.initWithStyle vc_style
-    and master_vc = hello_vc screen_bounds
+    and master_vc = _new_ GreetingsTVC._class_
     in
     vc |> UISplitViewController.setViewController master_vc ~forColumn: col_primary;
     self |> Property.set "window" win ~typ: Objc_t.id;
