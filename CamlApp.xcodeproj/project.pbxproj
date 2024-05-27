@@ -10,6 +10,7 @@
 		A15A09D72C03C3CE00A0013C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A15A09D62C03C3CE00A0013C /* Assets.xcassets */; };
 		A15A09DD2C03C3CE00A0013C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A15A09DC2C03C3CE00A0013C /* main.m */; };
 		A15A09E42C03C88600A0013C /* CamlLib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A15A09E32C03C88600A0013C /* CamlLib.xcframework */; };
+		A17C67EB2C04F9FB00261865 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A17C67EA2C04F9FB00261865 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -18,6 +19,7 @@
 		A15A09DB2C03C3CE00A0013C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A15A09DC2C03C3CE00A0013C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A15A09E32C03C88600A0013C /* CamlLib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = CamlLib.xcframework; sourceTree = SOURCE_ROOT; };
+		A17C67EA2C04F9FB00261865 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +57,7 @@
 				A15A09D62C03C3CE00A0013C /* Assets.xcassets */,
 				A15A09DB2C03C3CE00A0013C /* Info.plist */,
 				A15A09DC2C03C3CE00A0013C /* main.m */,
+				A17C67EA2C04F9FB00261865 /* LaunchScreen.storyboard */,
 			);
 			path = CamlApp;
 			sourceTree = "<group>";
@@ -117,6 +120,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A15A09D72C03C3CE00A0013C /* Assets.xcassets in Resources */,
+				A17C67EB2C04F9FB00261865 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,6 +258,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CamlApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIRequiresFullScreen = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -278,6 +284,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CamlApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIRequiresFullScreen = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (

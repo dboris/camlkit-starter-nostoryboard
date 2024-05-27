@@ -8,11 +8,14 @@ let greetings =
    ; "Spanish", "Hola Mundo!"
    |]
 
-let hello_vc text frame =
+let hello_vc text =
   let vc = _new_ UIViewController._class_
   and label = _new_ UILabel._class_
   in
-  let view = vc |> UIViewController.view in
+  let view = vc |> UIViewController.view
+  and frame =
+    UIScreen._class_ |> UIScreen.C.mainScreen |> UIScreen.bounds
+  in
   view |> UIView.setFrame frame;
   view |> UIView.setBackgroundColor
     (UIColor._class_ |> UIColor.C.systemBackgroundColor);
@@ -46,17 +49,14 @@ module GreetingsTVC = struct
     cell
     |> UITableViewCell.textLabel
     |> UILabel.setText (new_string (fst greetings.(i)));
-    cell |> UITableViewCell.setAccessoryType
-      _UITableViewCellAccessoryDisclosureIndicator;
+    cell |> UITableViewCell.setAccessoryType _UITableViewCellAccessoryDisclosureIndicator;
     cell
 
   let didSelectRowAtIndexPath self _cmd _tv indexPath =
     let i =
       indexPath |> Property.get "row" ~typ: Objc_t.llong |> LLong.to_int
-    and screen_bounds =
-      UIScreen._class_ |> UIScreen.C.mainScreen |> UIScreen.bounds
     in
-    let vc = hello_vc (new_string (snd greetings.(i))) screen_bounds in
+    let vc = hello_vc (new_string (snd greetings.(i))) in
     let nav_vc =
       alloc UINavigationController._class_
       |> UINavigationController.initWithRootViewController vc
@@ -112,12 +112,11 @@ module SceneDelegate = struct
   let scene_willConnectToSession self _cmd scene _session _opts =
     let win =
       alloc UIWindow._class_ |> UIWindow.initWithWindowScene scene
-    and vc_style = _UISplitViewControllerStyleDoubleColumn
     and col_primary = _UISplitViewControllerColumnPrimary
     in
     let vc =
       alloc UISplitViewController._class_
-      |> UISplitViewController.initWithStyle vc_style
+      |> UISplitViewController.initWithStyle _UISplitViewControllerStyleDoubleColumn
     and master_vc = _new_ GreetingsTVC._class_
     in
     vc |> UISplitViewController.setViewController master_vc ~forColumn: col_primary;
@@ -151,13 +150,11 @@ module AppDelegate = struct
           ~args: Objc_t.[id; id]
           ~return: Objc_t.bool
           (fun self _cmd _app _opts ->
-            Printf.eprintf "App launched...\n%!";
-            let nc =
-              NSNotificationCenter._class_ |> NSNotificationCenter.C.defaultCenter
-            in
-            nc |> NSNotificationCenter.addObserver self
+            NSNotificationCenter._class_
+            |> NSNotificationCenter.C.defaultCenter
+            |> NSNotificationCenter.addObserver self
               ~selector_: (selector "sceneActivated")
-              ~name: (new_string "UISceneDidActivateNotification")
+              ~name: _UISceneDidActivateNotification
               ~object_: nil;
             true)
 
