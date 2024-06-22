@@ -120,24 +120,22 @@ module SceneDelegate = struct
     and master_vc = _new_ GreetingsTVC._class_
     in
     vc |> UISplitViewController.setViewController master_vc ~forColumn: col_primary;
-    self |> Property.set "window" win ~typ: Objc_t.id;
+    self |> UIWindowController.setWindow win;
     win |> UIWindow.setRootViewController vc;
     vc |> UISplitViewController.showColumn col_primary;
     win |> UIWindow.makeKeyAndVisible
-
-  let methods =
-    Property._object_ "window" Objc_t.id () @
-    [ Define._method_ scene_willConnectToSession
-      ~cmd: (selector "scene:willConnectToSession:options:")
-      ~args: Objc_t.[id; id; id]
-      ~return: Objc_t.void
-    ]
 
   let _class_ = Define._class_ "SceneDelegate"
     ~superclass: UIResponder._class_
     ~protocols: [Objc.get_protocol "UIWindowSceneDelegate"]
     ~ivars: [Define.ivar "window" Objc_t.id]
-    ~methods
+    ~methods:
+      (Property._object_ "window" Objc_t.id () @
+      [ Define._method_ scene_willConnectToSession
+        ~cmd: (selector "scene:willConnectToSession:options:")
+        ~args: Objc_t.[id; id; id]
+        ~return: Objc_t.void
+      ])
 end
 
 module AppDelegate = struct
