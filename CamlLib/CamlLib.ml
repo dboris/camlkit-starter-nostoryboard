@@ -124,7 +124,7 @@ module SceneDelegate = struct
     vc |> UISplitViewController.showColumn col_primary;
     win |> UIWindow.makeKeyAndVisible
 
-  let self = Class.define "SceneDelegate"
+  let _self = Class.define "SceneDelegate"
     ~superclass: UIResponder.self
     ~protocols: [Objc.get_protocol "UIWindowSceneDelegate"]
     ~ivars: [Define.ivar "window" Objc_t.id]
@@ -138,7 +138,7 @@ module SceneDelegate = struct
 end
 
 module AppDelegate = struct
-  let self = Class.define "AppDelegate"
+  let _self = Class.define "AppDelegate"
     ~superclass: UIResponder.self
     ~methods:
       [

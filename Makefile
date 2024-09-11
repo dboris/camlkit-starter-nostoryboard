@@ -4,17 +4,12 @@ PRODUCT := CamlLib.xcframework
 BUILD_DIR := _build
 LIB_DIR := CamlLib
 
-$(PRODUCT): $(BUILD_DIR)/libCamlLib.a
+$(PRODUCT): build
 	rm -rf $@
 	xcodebuild -create-xcframework -output $@ \
 		-library $(BUILD_DIR)/device.ios/$(LIB_DIR)/libCamlLib.a \
-		-library $^ \
+		-library $(BUILD_DIR)/simulator.ios/$(LIB_DIR)/libCamlLib.a \
 		-allow-internal-distribution
-
-$(BUILD_DIR)/libCamlLib.a: build
-	lipo -create -output $@ \
-		$(BUILD_DIR)/simulator.ios/$(LIB_DIR)/libCamlLib.a \
-		$(BUILD_DIR)/simulator-arm.ios/$(LIB_DIR)/libCamlLib.a
 
 build:
 	dune build @default
