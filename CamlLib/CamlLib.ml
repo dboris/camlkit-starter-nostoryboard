@@ -1,6 +1,5 @@
 open Foundation
-open Uikit
-open Uikit_globals
+open UIKit
 open Runtime
 
 let greetings =
@@ -9,20 +8,20 @@ let greetings =
    |]
 
 let hello_vc text =
-  let vc = _new_ UIViewController._class_
-  and label = _new_ UILabel._class_
+  let vc = _new_ UIViewController.self
+  and label = _new_ UILabel.self
   in
   let view = vc |> UIViewController.view
   and frame =
-    UIScreen._class_ |> UIScreen.C.mainScreen |> UIScreen.bounds
+    UIScreen.self |> UIScreenClass.mainScreen |> UIScreen.bounds
   in
   view |> UIView.setFrame frame;
   view |> UIView.setBackgroundColor
-    (UIColor._class_ |> UIColor.C.systemBackgroundColor);
+    (UIColor.self |> UIColorClass.systemBackgroundColor);
 
   label |> UILabel.setText text;
   label |> UILabel.setTextColor
-    (UIColor._class_ |> UIColor.C.systemBlackColor);
+    (UIColor.self |> UIColorClass.systemBlackColor);
   label |> UILabel.setTextAlignment _UITextAlignmentCenter;
   label |> UIView.setFrame frame;
   view |> UIView.addSubview label;
@@ -58,7 +57,7 @@ module GreetingsTVC = struct
     in
     let vc = hello_vc (new_string (snd greetings.(i))) in
     let nav_vc =
-      alloc UINavigationController._class_
+      alloc UINavigationController.self
       |> UINavigationController.initWithRootViewController vc
     in
     self
@@ -70,38 +69,38 @@ module GreetingsTVC = struct
     self |> UIViewController.setTitle (new_string "Greetings");
     self
     |> UITableViewController.tableView
-    |> UITableView.registerClass UITableViewCell._class_
+    |> UITableView.registerClass UITableViewCell.self
         ~forCellReuseIdentifier: cellID
 
-  let _class_ = Define._class_ "GreetingsTVC"
-    ~superclass: UITableViewController._class_
+  let self = Class.define "GreetingsTVC"
+    ~superclass: UITableViewController.self
     ~methods:
-      [ Define._method_ numberOfSectionsInTableView
+      [ Method.define numberOfSectionsInTableView
         ~args: Objc_t.[id]
         ~return: Objc_t.llong
         ~cmd: (selector "numberOfSectionsInTableView:")
 
-      ; Define._method_ titleForHeaderInSection
+      ; Method.define titleForHeaderInSection
         ~args: Objc_t.[id; llong]
         ~return: Objc_t.id
         ~cmd: (selector "tableView:titleForHeaderInSection:")
 
-      ; Define._method_ numberOfRowsInSection
+      ; Method.define numberOfRowsInSection
         ~args: Objc_t.[id; llong]
         ~return: Objc_t.llong
         ~cmd: (selector "tableView:numberOfRowsInSection:")
 
-      ; Define._method_ cellForRowAtIndexPath
+      ; Method.define cellForRowAtIndexPath
         ~args: Objc_t.[id; id]
         ~return: Objc_t.id
         ~cmd: (selector "tableView:cellForRowAtIndexPath:")
 
-      ; Define._method_ didSelectRowAtIndexPath
+      ; Method.define didSelectRowAtIndexPath
         ~args: Objc_t.[id; id]
         ~return: Objc_t.void
         ~cmd: (selector "tableView:didSelectRowAtIndexPath:")
 
-      ; Define._method_ viewDidLoad
+      ; Method.define viewDidLoad
         ~args: Objc_t.[]
         ~return: Objc_t.void
         ~cmd: (selector "viewDidLoad")
@@ -111,13 +110,13 @@ end
 module SceneDelegate = struct
   let scene_willConnectToSession self _cmd scene _session _opts =
     let win =
-      alloc UIWindow._class_ |> UIWindow.initWithWindowScene scene
+      alloc UIWindow.self |> UIWindow.initWithWindowScene scene
     and col_primary = _UISplitViewControllerColumnPrimary
     in
     let vc =
-      alloc UISplitViewController._class_
+      alloc UISplitViewController.self
       |> UISplitViewController.initWithStyle _UISplitViewControllerStyleDoubleColumn
-    and master_vc = _new_ GreetingsTVC._class_
+    and master_vc = _new_ GreetingsTVC.self
     in
     vc |> UISplitViewController.setViewController master_vc ~forColumn: col_primary;
     self |> UIWindowController.setWindow win;
@@ -125,13 +124,13 @@ module SceneDelegate = struct
     vc |> UISplitViewController.showColumn col_primary;
     win |> UIWindow.makeKeyAndVisible
 
-  let _class_ = Define._class_ "SceneDelegate"
-    ~superclass: UIResponder._class_
+  let self = Class.define "SceneDelegate"
+    ~superclass: UIResponder.self
     ~protocols: [Objc.get_protocol "UIWindowSceneDelegate"]
     ~ivars: [Define.ivar "window" Objc_t.id]
     ~methods:
       (Property._object_ "window" Objc_t.id () @
-      [ Define._method_ scene_willConnectToSession
+      [ Method.define scene_willConnectToSession
         ~cmd: (selector "scene:willConnectToSession:options:")
         ~args: Objc_t.[id; id; id]
         ~return: Objc_t.void
@@ -139,35 +138,35 @@ module SceneDelegate = struct
 end
 
 module AppDelegate = struct
-  let _class_ = Define._class_ "AppDelegate"
-    ~superclass: UIResponder._class_
+  let self = Class.define "AppDelegate"
+    ~superclass: UIResponder.self
     ~methods:
       [
-        Define._method_
+        Method.define
           ~cmd: (selector "application:didFinishLaunchingWithOptions:")
           ~args: Objc_t.[id; id]
           ~return: Objc_t.bool
           (fun self _cmd _app _opts ->
-            NSNotificationCenter._class_
-            |> NSNotificationCenter.C.defaultCenter
+            NSNotificationCenter.self
+            |> NSNotificationCenterClass.defaultCenter
             |> NSNotificationCenter.addObserver self
               ~selector_: (selector "sceneActivated")
               ~name: _UISceneDidActivateNotification
               ~object_: nil;
             true)
 
-        ; Define._method_
+        ; Method.define
           ~cmd: (selector "sceneActivated")
           ~args: Objc_t.[id]
           ~return: Objc_t.void
           (fun _self _cmd _scene -> Printf.eprintf "sceneActivated...\n%!")
 
-        ; Define._method_
+        ; Method.define
           ~cmd: (selector "application:configurationForConnectingSceneSession:options:")
           ~args: Objc_t.[id; id; id]
           ~return: Objc_t.id
           (fun _self _cmd _app conn_session _opts ->
-            alloc UISceneConfiguration._class_
+            alloc UISceneConfiguration.self
             |> UISceneConfiguration.initWithName (new_string "Default Configuration")
                 ~sessionRole: (UISceneSession.role conn_session))
       ]
