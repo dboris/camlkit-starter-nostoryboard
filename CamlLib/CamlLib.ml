@@ -12,8 +12,15 @@ let hello_vc text =
   and label = _new_ UILabel.self
   in
   let view = vc |> UIViewController.view
-  and frame =
-    UIScreen.self |> UIScreenClass.mainScreen |> UIScreen.bounds
+  and main_screen = UIScreen.self |> UIScreenClass.mainScreen in
+  let frame =
+    (* main_screen |> UIScreen.bounds *)
+    (* temporary fix *)
+    Objc.msg_send_stret
+      ~self: main_screen
+      ~cmd: (selector "bounds")
+      ~typ: (returning CGRect.t)
+      ~return_type: CGRect.t
   in
   view |> UIView.setFrame frame;
   view |> UIView.setBackgroundColor
