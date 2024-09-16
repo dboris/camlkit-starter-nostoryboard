@@ -12,23 +12,13 @@ let hello_vc text =
   and label = _new_ UILabel.self
   in
   let view = vc |> UIViewController.view
-  and main_screen = UIScreen.self |> UIScreenClass.mainScreen in
-  let frame =
-    (* main_screen |> UIScreen.bounds *)
-    (* temporary fix *)
-    Objc.msg_send_stret
-      ~self: main_screen
-      ~cmd: (selector "bounds")
-      ~typ: (returning CGRect.t)
-      ~return_type: CGRect.t
+  and frame = UIScreen.self |> UIScreenClass.mainScreen |> UIScreen.bounds
   in
   view |> UIView.setFrame frame;
   view |> UIView.setBackgroundColor
     (UIColor.self |> UIColorClass.systemBackgroundColor);
-
   label |> UILabel.setText text;
-  label |> UILabel.setTextColor
-    (UIColor.self |> UIColorClass.systemBlackColor);
+  label |> UILabel.setTextColor (UIColor.self |> UIColorClass.systemBlackColor);
   label |> UILabel.setTextAlignment _UITextAlignmentCenter;
   label |> UIView.setFrame frame;
   view |> UIView.addSubview label;
