@@ -157,18 +157,18 @@ module AppDelegate = struct
             true)
 
       ; Method.define
-        ~cmd: (selector "sceneActivated")
-        ~args: Objc_t.[id]
-        ~return: Objc_t.void
-        (fun _self _cmd _scene -> Printf.eprintf "sceneActivated...\n%!")
+          ~cmd: (selector "sceneActivated")
+          ~args: Objc_t.[id]
+          ~return: Objc_t.void
+          (fun _self _cmd _scene -> Printf.eprintf "sceneActivated...\n%!")
 
       ; Method.define
-        ~cmd: (selector "application:configurationForConnectingSceneSession:options:")
-        ~args: Objc_t.[id; id; id]
-        ~return: Objc_t.id
-        (fun _self _cmd _app conn_session _opts ->
-          alloc UISceneConfiguration.self
-          |> UISceneConfiguration.initWithName (new_string "Default Configuration")
-              ~sessionRole: (UISceneSession.role conn_session))
+          ~cmd: (selector "application:configurationForConnectingSceneSession:options:")
+          ~args: Objc_t.[id; id; id]
+          ~return: Objc_t.id
+          (fun _self _cmd _app conn_session _opts ->
+            alloc UISceneConfiguration.self
+            |> UISceneConfiguration.initWithName (new_string "Default Configuration")
+                ~sessionRole: (UISceneSession.role conn_session))
       ]
 end
