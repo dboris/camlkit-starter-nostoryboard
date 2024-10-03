@@ -126,18 +126,23 @@ module SceneDelegate = struct
         vc |> UISplitViewController.showColumn col_primary;
         win |> UIWindow.makeKeyAndVisible)
 
-  let _self = Class.define "SceneDelegate"
-    ~superclass: UIResponder.self
-    ~protocols: [Objc.get_protocol "UIWindowSceneDelegate"]
-    ~ivars: [Ivar.define "window" Objc_t.id]
-    ~methods: (Property._object_ "window" Objc_t.id () @ [scene_willConnectToSession])
+  (* This class is referenced in Info.plist, UISceneConfigurations key.
+    It is instantiated from the Objective-C side. *)
+  let _self =
+    Class.define "SceneDelegate"
+      ~superclass: UIResponder.self
+      ~protocols: [Objc.get_protocol "UIWindowSceneDelegate"]
+      ~ivars: [Ivar.define "window" Objc_t.id]
+      ~methods: (Property._object_ "window" Objc_t.id () @ [scene_willConnectToSession])
 end
 
 module AppDelegate = struct
-  let _self = Class.define "AppDelegate"
-    ~superclass: UIResponder.self
-    ~methods:
-      [ Method.define
+  (* This class is referenced in main.m. It is instantiated from UIApplicationMain. *)
+  let _self =
+    Class.define "AppDelegate"
+      ~superclass: UIResponder.self
+      ~methods:
+        [ Method.define
           ~cmd: (selector "application:didFinishLaunchingWithOptions:")
           ~args: Objc_t.[id; id]
           ~return: Objc_t.bool
@@ -150,13 +155,13 @@ module AppDelegate = struct
               ~object_: nil;
             true)
 
-      ; Method.define
+        ; Method.define
           ~cmd: (selector "sceneActivated")
           ~args: Objc_t.[id]
           ~return: Objc_t.void
           (fun _self _cmd _scene -> Printf.eprintf "sceneActivated...\n%!")
 
-      ; Method.define
+        ; Method.define
           ~cmd: (selector "application:configurationForConnectingSceneSession:options:")
           ~args: Objc_t.[id; id; id]
           ~return: Objc_t.id
@@ -164,5 +169,5 @@ module AppDelegate = struct
             alloc UISceneConfiguration.self
             |> UISceneConfiguration.initWithName (new_string "Default Configuration")
                 ~sessionRole: (UISceneSession.role conn_session))
-      ]
+        ]
 end
