@@ -58,9 +58,7 @@ module GreetingsTVC = struct
       (fun _self _cmd tv indexPath ->
         let cell = tv |> UITableView.dequeueReusableCellWithIdentifier' cellID
           ~forIndexPath: indexPath
-        and i =
-          indexPath |> NSIndexPath.row |> LLong.to_int
-        in
+        and i = indexPath |> NSIndexPath.row |> LLong.to_int in
         cell
         |> UITableViewCell.textLabel
         |> UILabel.setText (new_string (fst greetings.(i)));
@@ -73,9 +71,7 @@ module GreetingsTVC = struct
       ~return: Objc_t.void
       ~cmd: (selector "tableView:didSelectRowAtIndexPath:")
       (fun self _cmd _tv indexPath ->
-        let i =
-          indexPath |> NSIndexPath.row |> LLong.to_int
-        in
+        let i = indexPath |> NSIndexPath.row |> LLong.to_int in
         let vc = hello_vc (new_string (snd greetings.(i))) in
         let nav_vc =
           alloc UINavigationController.self
@@ -117,10 +113,8 @@ module SceneDelegate = struct
       ~args: Objc_t.[id; id; id]
       ~return: Objc_t.void
       (fun self _cmd scene _session _opts ->
-        let win =
-          alloc UIWindow.self |> UIWindow.initWithWindowScene scene
-        and col_primary = _UISplitViewControllerColumnPrimary
-        in
+        let win = alloc UIWindow.self |> UIWindow.initWithWindowScene scene
+        and col_primary = _UISplitViewControllerColumnPrimary in
         let vc =
           alloc UISplitViewController.self
           |> UISplitViewController.initWithStyle _UISplitViewControllerStyleDoubleColumn
