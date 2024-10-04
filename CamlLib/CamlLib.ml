@@ -63,7 +63,8 @@ module GreetingsTVC = struct
         cell
         |> UITableViewCell.textLabel
         |> UILabel.setText (new_string (fst greetings.(i)));
-        cell |> UITableViewCell.setAccessoryType _UITableViewCellAccessoryDisclosureIndicator;
+        cell
+        |> UITableViewCell.setAccessoryType _UITableViewCellAccessoryDisclosureIndicator;
         cell)
 
   let didSelectRowAtIndexPath =
@@ -116,20 +117,21 @@ module SceneDelegate = struct
       ~return: Objc_t.void
       (fun self _cmd scene _session _opts ->
         let win = alloc UIWindow.self |> UIWindow.initWithWindowScene scene
-        and col_primary = _UISplitViewControllerColumnPrimary in
-        let vc =
+        and vc =
           alloc UISplitViewController.self
           |> UISplitViewController.initWithStyle _UISplitViewControllerStyleDoubleColumn
         and master_vc = _new_ GreetingsTVC.self
         in
-        vc |> UISplitViewController.setViewController master_vc ~forColumn: col_primary;
+        vc
+        |> UISplitViewController.setViewController master_vc
+            ~forColumn: _UISplitViewControllerColumnPrimary;
         self |> UIWindowController.setWindow win;
         win |> UIWindow.setRootViewController vc;
-        vc |> UISplitViewController.showColumn col_primary;
+        vc |> UISplitViewController.showColumn _UISplitViewControllerColumnPrimary;
         win |> UIWindow.makeKeyAndVisible)
 
   (* This class is referenced in Info.plist, UISceneConfigurations key.
-    It is instantiated from the Objective-C side. *)
+    It is instantiated from UIApplicationMain. *)
   let _self =
     Class.define "SceneDelegate"
       ~superclass: UIResponder.self
