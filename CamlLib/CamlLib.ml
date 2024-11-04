@@ -1,10 +1,9 @@
-open Foundation
 open UIKit
-open Runtime
 
 let greetings =
   [| "English", "Hello World!"
    ; "Spanish", "Hola Mundo!"
+   ; "French", "Bonjour, le monde !"
    |]
 
 let hello_vc text =
@@ -30,36 +29,24 @@ module GreetingsTVC = struct
   let cellID = new_string "Cell"
 
   let numberOfSectionsInTableView =
-    Method.define
-      ~args: Objc_t.[id]
-      ~return: Objc_t.llong
-      ~cmd: (selector "numberOfSectionsInTableView:")
+    UITableViewControllerMethods.numberOfSectionsInTableView'
       (fun _self _cmd _tv -> LLong.of_int 1)
 
   let titleForHeaderInSection =
-    Method.define
-      ~args: Objc_t.[id; llong]
-      ~return: Objc_t.id
-      ~cmd: (selector "tableView:titleForHeaderInSection:")
+    UITableViewControllerMethods.tableView'titleForHeaderInSection'
       (fun _self _cmd _tv _section -> new_string "Language")
 
   let numberOfRowsInSection =
-    Method.define
-      ~args: Objc_t.[id; llong]
-      ~return: Objc_t.llong
-      ~cmd: (selector "tableView:numberOfRowsInSection:")
+    UITableViewControllerMethods.tableView'numberOfRowsInSection'
       (fun _self _cmd _tv _section -> LLong.of_int (Array.length greetings))
 
   let cellForRowAtIndexPath =
-    Method.define
-      ~args: Objc_t.[id; id]
-      ~return: Objc_t.id
-      ~cmd: (selector "tableView:cellForRowAtIndexPath:")
+    UITableViewControllerMethods.tableView'cellForRowAtIndexPath'
       (fun _self _cmd tv index_path ->
         let cell =
           tv |> UITableView.dequeueReusableCellWithIdentifier' cellID
             ~forIndexPath: index_path
-        and i = index_path |> NSIndexPath.row |> LLong.to_int in
+        and i = index_path |> NSIndexPath.row in
         cell
         |> UITableViewCell.textLabel
         |> UILabel.setText (new_string (fst greetings.(i)));
@@ -68,12 +55,9 @@ module GreetingsTVC = struct
         cell)
 
   let didSelectRowAtIndexPath =
-    Method.define
-      ~args: Objc_t.[id; id]
-      ~return: Objc_t.void
-      ~cmd: (selector "tableView:didSelectRowAtIndexPath:")
+    UITableViewDelegate.tableView'didSelectRowAtIndexPath'
       (fun self _cmd _tv index_path ->
-        let i = index_path |> NSIndexPath.row |> LLong.to_int in
+        let i = index_path |> NSIndexPath.row in
         let vc = hello_vc (new_string (snd greetings.(i))) in
         let nav_vc =
           alloc UINavigationController.self
@@ -84,12 +68,9 @@ module GreetingsTVC = struct
         |> UISplitViewController.showDetailViewController nav_vc ~sender: self)
 
   let viewDidLoad =
-    Method.define
-      ~args: Objc_t.[]
-      ~return: Objc_t.void
-      ~cmd: (selector "viewDidLoad")
+    UIViewControllerMethods.viewDidLoad
       (fun self cmd ->
-        self |> msg_super cmd ~args: Objc_t.[] ~return: Objc_t.void;
+        msg_super cmd ~self ~args: Objc_type.noargs ~return: Objc_type.void;
         self |> UIViewController.setTitle (new_string "Greetings");
         self
         |> UITableViewController.tableView
@@ -110,11 +91,8 @@ module GreetingsTVC = struct
 end
 
 module SceneDelegate = struct
-  let scene_willConnectToSession =
-    Method.define
-      ~cmd: (selector "scene:willConnectToSession:options:")
-      ~args: Objc_t.[id; id; id]
-      ~return: Objc_t.void
+  let willConnectToSession =
+    UISceneDelegate.scene'willConnectToSession'options'
       (fun self _cmd scene _session _opts ->
         let win = alloc UIWindow.self |> UIWindow.initWithWindowScene scene
         and vc =
@@ -136,8 +114,8 @@ module SceneDelegate = struct
     Class.define "SceneDelegate"
       ~superclass: UIResponder.self
       ~protocols: [Objc.get_protocol "UIWindowSceneDelegate"]
-      ~ivars: [Ivar.define "window" Objc_t.id]
-      ~methods: (Property._object_ "window" Objc_t.id () @ [scene_willConnectToSession])
+      ~properties: [Property.define "window" Objc_type.id]
+      ~methods: [willConnectToSession]
 end
 
 module AppDelegate = struct
@@ -146,29 +124,23 @@ module AppDelegate = struct
     Class.define "AppDelegate"
       ~superclass: UIResponder.self
       ~methods:
-        [ Method.define
-          ~cmd: (selector "application:didFinishLaunchingWithOptions:")
-          ~args: Objc_t.[id; id]
-          ~return: Objc_t.bool
-          (fun self _cmd _app _opts ->
-            NSNotificationCenter.self
-            |> NSNotificationCenterClass.defaultCenter
-            |> NSNotificationCenter.addObserver self
-              ~selector_: (selector "sceneActivated")
-              ~name: _UISceneDidActivateNotification
-              ~object_: nil;
-            true)
+        [ UIApplicationDelegate.application'didFinishLaunchingWithOptions'
+            (fun self _cmd _app _opts ->
+              NSNotificationCenter.self
+              |> NSNotificationCenterClass.defaultCenter
+              |> NSNotificationCenter.addObserver self
+                ~selector_: (selector "sceneActivated")
+                ~name: _UISceneDidActivateNotification
+                ~object_: nil;
+              true)
 
         ; Method.define
           ~cmd: (selector "sceneActivated")
-          ~args: Objc_t.[id]
-          ~return: Objc_t.void
+          ~args: Objc_type.[id]
+          ~return: Objc_type.void
           (fun _self _cmd _scene -> Printf.eprintf "sceneActivated...\n%!")
 
-        ; Method.define
-          ~cmd: (selector "application:configurationForConnectingSceneSession:options:")
-          ~args: Objc_t.[id; id; id]
-          ~return: Objc_t.id
+        ; UIApplicationDelegate.application'configurationForConnectingSceneSession'options'
           (fun _self _cmd _app conn_session _opts ->
             alloc UISceneConfiguration.self
             |> UISceneConfiguration.initWithName (new_string "Default Configuration")

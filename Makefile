@@ -1,4 +1,4 @@
-.PHONY: build clean open
+.PHONY: build dev clean open
 
 PRODUCT := CamlLib.xcframework
 BUILD_DIR := _build
@@ -18,6 +18,13 @@ $(BUILD_DIR)/libCamlLib.a: build
 
 build:
 	dune build @default
+
+sim:
+	dune build @default --workspace dune-workspace.simulator
+	rm -rf CamlLib.xcframework
+	xcodebuild -create-xcframework -output CamlLib.xcframework \
+		-library _build/simulator.ios/CamlLib/libCamlLib.a \
+		-allow-internal-distribution
 
 clean:
 	dune clean
