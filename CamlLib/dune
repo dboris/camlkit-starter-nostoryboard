@@ -5,6 +5,7 @@
   (= %{context_name} "device.ios")
   (= %{context_name} "simulator.ios")
   (= %{context_name} "simulator-arm.ios")
+  (= %{context_name} "simulator-x86.ios")
   (= %{context_name} "catalyst.ios")))
  (libraries
   camlkit-base.Foundation
@@ -17,6 +18,7 @@
   (= %{context_name} "device.ios")
   (= %{context_name} "simulator.ios")
   (= %{context_name} "simulator-arm.ios")
+  (= %{context_name} "simulator-x86.ios")
   (= %{context_name} "catalyst.ios")))
  (deps CamlLib.exe.o)
  (targets libCamlLib.a)

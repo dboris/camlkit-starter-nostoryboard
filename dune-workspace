@@ -2,14 +2,14 @@
 
 (context
  (opam
-  (switch 4.14.2-device)
+  (switch device)
   (name device)
   (targets ios)
   (disable_dynamically_linked_foreign_archives true)))
 
 (context
  (opam
-  (switch 4.14.2-simulator)
+  (switch simulator)
   (name simulator)
   (targets ios)
   ; (merlin)
@@ -17,14 +17,14 @@
 
 (context
  (opam
-  (switch 4.14.2-simulator-arm)
-  (name simulator-arm)
+  (switch simulator-x86)
+  (name simulator-x86)
   (targets ios)
   (disable_dynamically_linked_foreign_archives true)))
 
 ; (context
 ;  (opam
-;   (switch 4.14.2-catalyst)
+;   (switch catalyst)
 ;   (name catalyst)
 ;   (targets ios)
 ;   (disable_dynamically_linked_foreign_archives true)))
