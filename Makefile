@@ -1,4 +1,4 @@
-.PHONY: build dev clean open
+.PHONY: build sim clean open
 
 PRODUCT := CamlLib.xcframework
 BUILD_DIR := _build
@@ -14,7 +14,7 @@ $(PRODUCT): $(BUILD_DIR)/libCamlLib.a
 $(BUILD_DIR)/libCamlLib.a: build
 	lipo -create -output $@ \
 		$(BUILD_DIR)/simulator.ios/$(LIB_DIR)/libCamlLib.a \
-		$(BUILD_DIR)/simulator-arm.ios/$(LIB_DIR)/libCamlLib.a
+		$(BUILD_DIR)/simulator-x86.ios/$(LIB_DIR)/libCamlLib.a
 
 build:
 	dune build @default
